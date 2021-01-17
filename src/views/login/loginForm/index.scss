@@ -1,0 +1,23 @@
+.loginForm-warp {
+  width: 300px;
+  .loginForm-header {
+    height: 50px;
+    .cloumn {
+      font-size: 16px;
+      float: left;
+      color: white;
+    }
+    .title {
+      float: right;
+      font-size: 12px;
+      opacity: 0.3;
+      color: white;
+      line-height: 30px;
+    }
+  }
+  .loginForm-content {
+    .code-button {
+      width: 103px;
+    }
+  }
+}

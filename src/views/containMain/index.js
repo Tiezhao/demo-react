@@ -12,11 +12,13 @@ import TeacherList from "./component/teacherList";
 export default class ContainMain extends React.Component {
   render() {
     return (
-      <Switch>
-        <Route path="/home" component={HomeList} />
-        <Route path="/home/studentInfo" component={StudentList} />
-        <Route path="/home/teacherInfo" component={TeacherList} />
-      </Switch>
+      <Router>
+        <Switch>
+          <Route path="/home" component={HomeList} />
+          <Route path="/home/studentInfo" component={StudentList} />
+          <Route path="/home/teacherInfo" component={TeacherList} />
+        </Switch>
+      </Router>
     );
   }
 }
