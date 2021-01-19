@@ -1,87 +1,52 @@
 import React, { Component, Fragment } from "react";
-import { Form, Input, Button, Row, Col, message } from "antd";
+import { Form, Input, Button, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { withRouter } from "react-router-dom";
 //导入api
-import { Login, GetCode } from "../../../api/account";
+import { Login } from "../../../api/account";
 ////导入密码正则，邮箱正则
-import { valid_password_neg, validate_email } from "../../../utils/validate";
+import { valid_password_neg } from "../../../utils/validate";
+import Code from "../../../components/code/index";
 import "./index.scss";
-
 class LoginForm extends Component {
   state = {
     username: "",
-    code_disabled: true,
-    code_loading: false,
-    code_text: "获取验证码",
+    module: "login",
+    password: "",
+    code: "",
+    loading: false,
   };
 
   //获取到用户名输入框实时数据并更新到state的username中
   usernameChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({ username: e.target.value });
+  };
+  passwordChange = (e) => {
+    // console.log(e.target.value);
+    this.setState({ password: e.target.value });
+  };
+  codeChange = (e) => {
+    // console.log(e.target.value);
+    this.setState({ code: e.target.value });
   };
 
   // 登录， 登录时调用该方法会打印出输入的用户名、密码等
   onFinish = (values) => {
-    Login()
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {});
-    console.log("Received values of form: ", values);
-  };
-
-  //获取验证码
-  getCode = () => {
-    if (this.state.username) {
-      this.setState({
-        code_loading: true,
-        code_text: "发送中",
-      });
-    }
+    this.setState({ loading: true });
     const requestData = {
       username: this.state.username,
-      module: "login",
+      password: this.state.password,
+      code: this.state.code,
     };
-    //调用axios来发送请求
-    GetCode(requestData)
+    Login(requestData)
       .then((response) => {
-        //成功则调用resolve
-        this.countDown();
+        // console.log(response);
+        this.props.history.push("/home");
       })
       .catch((error) => {
-        //失败则调用reject
-        this.setState({
-          code_loading: false,
-          code_text: "重新发送",
-        });
+        console.log("Received values of form: ", error);
       });
-  };
-
-  //登录倒计时
-  countDown = () => {
-    alert(123);
-    let timer = null;
-    let second = 60;
-    this.setState({
-      code_loading: false,
-      code_text: `${second}s`,
-      code_disabled: true,
-    });
-    timer = setInterval(() => {
-      second--;
-      if (second <= 0) {
-        this.setState({
-          code_text: "重新获取",
-          code_disabled: false,
-        });
-        clearInterval(timer);
-        return;
-      }
-      this.setState({
-        code_text: `${second}s`,
-      });
-    }, 1000);
   };
 
   //切换到注册页面
@@ -92,8 +57,7 @@ class LoginForm extends Component {
   };
 
   render() {
-    const { code_disabled } = this.state;
-    const _this = this;
+    const { username, module, loading } = this.state;
     return (
       <div className="loginForm-warp">
         <div className="loginForm-header">
@@ -118,15 +82,15 @@ class LoginForm extends Component {
                   required: true,
                   message: "邮箱不能为空！",
                 },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (validate_email(value)) {
-                      _this.setState({ code_disabled: false });
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("邮箱格式不正确！");
-                  },
-                }),
+                // ({ getFieldValue }) => ({
+                //   validator(_, value) {
+                //     if (validate_email(value)) {
+                //       _this.setState({ code_disabled: false });
+                //       return Promise.resolve();
+                //     }
+                //     return Promise.reject("邮箱格式不正确！");
+                //   },
+                // }),
               ]}
             >
               <Input
@@ -142,6 +106,7 @@ class LoginForm extends Component {
                   required: true,
                   message: "密码不能为空！",
                 },
+                //利用pattern正则作判断
                 {
                   pattern: valid_password_neg,
                   message: "密码必须是大于6位小于20位的数字+字母",
@@ -154,6 +119,7 @@ class LoginForm extends Component {
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Password"
+                onChange={this.passwordChange}
               />
             </Form.Item>
             <Form.Item
@@ -175,18 +141,11 @@ class LoginForm extends Component {
                     prefix={<LockOutlined className="site-form-item-icon" />}
                     type="text"
                     placeholder="Code"
+                    onChange={this.codeChange}
                   />
                 </Col>
                 <Col span={8} style={{ paddingLeft: 8.5 }}>
-                  <Button
-                    type="danger"
-                    disabled={code_disabled}
-                    onClick={this.getCode}
-                    loading={this.state.code_loading}
-                    className="code-button"
-                  >
-                    {this.state.code_text}
-                  </Button>
+                  <Code username={username} module={module} />
                 </Col>
               </Row>
             </Form.Item>
@@ -197,6 +156,7 @@ class LoginForm extends Component {
                 htmlType="submit"
                 className="login-form-button"
                 style={{ width: "100%" }}
+                loading={loading}
               >
                 登录
               </Button>
@@ -208,4 +168,4 @@ class LoginForm extends Component {
   }
 }
 
-export default LoginForm;
+export default withRouter(LoginForm);

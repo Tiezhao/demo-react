@@ -10,7 +10,7 @@ class Login extends Component {
   // 调用changeForm改变formType
   changeForm = (value) => {
     this.setState({ formType: value });
-    console.log(value);
+    // console.log(value);
   };
   render() {
     const { formType } = this.state;
