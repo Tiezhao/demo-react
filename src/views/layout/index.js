@@ -1,7 +1,7 @@
 import React from "react";
-import Aside from "../aside/index";
+import Aside from "./aside/index";
 import { Layout } from "antd";
-import ContainMain from "../containMain/index";
+import ContainMain from "./containMain/index";
 import "./style.scss";
 
 const { Content, Sider } = Layout;

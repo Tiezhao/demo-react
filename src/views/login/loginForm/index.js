@@ -7,6 +7,7 @@ import { Login } from "../../../api/account";
 ////导入密码正则，邮箱正则
 import { valid_password_neg } from "../../../utils/validate";
 import Code from "../../../components/code/index";
+import { setToken } from "../../../utils/session";
 import "./index.scss";
 class LoginForm extends Component {
   state = {
@@ -41,8 +42,10 @@ class LoginForm extends Component {
     };
     Login(requestData)
       .then((response) => {
-        // console.log(response);
-        this.props.history.push("/home");
+        // console.log(response.data.data.token);
+        //登陆成功后将token暂时存储到浏览器
+        setToken(response.data.data.token);
+        this.props.history.push("/index");
       })
       .catch((error) => {
         console.log("Received values of form: ", error);
